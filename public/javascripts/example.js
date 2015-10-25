@@ -11,7 +11,7 @@ var ajaxCall = function() {
     var ajaxCallBack = {
         success : onSuccess,
         error : onError
-    }
+    };
 
     jsRoutes.controllers.Application.ajaxCall().ajax(ajaxCallBack);
 };

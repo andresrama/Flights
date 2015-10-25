@@ -1,0 +1,11 @@
+@(alertMsg : String)(implicit req: RequestHeader)
+
+<!-- MAPBOX FTW: https://www.mapbox.com/mapbox.js/example/v1.0.0/animating-flight-paths/ -->
+
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
+<div id='map'></div>
+<!-- We use arc.js to make our paths curved. -->
+<script src='https://api.mapbox.com/mapbox.js/plugins/arc.js/v0.1.0/arc.js'></script>
+<script src="@routes.Assets.versioned("javascripts/map.js")"></script>
