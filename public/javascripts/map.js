@@ -20,7 +20,7 @@ function record(data){
 //1. Get the group IDs from AJAX
 var getUsersByGroupId = function() {
     var getUsersByGroupIdCallBack = {
-        success : record,
+        success : getFlightsByUserIds,
         error : record
     };
 
@@ -28,6 +28,15 @@ var getUsersByGroupId = function() {
 };
 
 //2. Get the data for each individual in the group
+function getFlightsByUserIds(data) {
+    var getFlightsByUserIds = {
+        success : record,
+        error : record
+    };
+
+    jsRoutes.controllers.Application.getFlightsByUserIds(data).ajax(getFlightsByUserIds)
+};
+
 // Add a new line to the map with no points.
 var polyline = L.polyline([]).addTo(map);
 
