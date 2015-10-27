@@ -13,13 +13,13 @@ var ajaxCall = function() {
         error : onError
     };
 
-    jsRoutes.controllers.Application.ajaxCall().ajax(ajaxCallBack);
+    jsRoutes.controllers.Application.ajaxCall("test").ajax(ajaxCallBack);
 };
 
 var  onSuccess = function(data) {
     alert(data);
-}
+};
 
 var onError = function(error) {
     alert(error);
-}
+};
