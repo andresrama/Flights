@@ -19,13 +19,13 @@ class Application extends Controller {
       JavaScriptReverseRouter("jsRoutes")(
         routes.javascript.Application.index,
         routes.javascript.Application.ajaxCall,
-        routes.javascript.Application.getGroupById,
+        routes.javascript.Application.getUsersByGroupId,
         routes.javascript.Application.getFlightsByUserIds
       )
     ).as("text/javascript")
   }
 
-  def getGroupById(groupId: Int) = Action { implicit request =>
+  def getUsersByGroupId(groupId: Int) = Action { implicit request =>
     Ok(
       JSONArray(List(1, 2, 3, 4, groupId)).toString()
       //Json.toJson(List(1,2,3,4,groupId)).toString

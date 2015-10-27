@@ -21,5 +21,5 @@ var  onSuccess = function(data) {
 };
 
 var onError = function(error) {
-    alert(error);
+    alert("ERROR: " + error);
 };

@@ -2,7 +2,7 @@
  * Created by Andres Rama on 9/7/2015.
  */
 $(function() {
-    getGroupById();
+    getUsersByGroupId();
 
 });
 
@@ -13,19 +13,19 @@ var map = L.mapbox.map('map', 'mapbox.streets')
 
 var groupIds = [];
 
-//1. Get the group IDs from AJAX
-var getGroupById = function() {
-    var getGroupByIdCallBack = {
-        success : displayGroup,
-        error : onError
-    };
-
-    jsRoutes.controllers.Application.getGroupById(5).ajax(getGroupByIdCallBack);
-};
-
-function displayGroup(data){
+function record(data){
     alert(data)
 }
+
+//1. Get the group IDs from AJAX
+var getUsersByGroupId = function() {
+    var getUsersByGroupIdCallBack = {
+        success : record,
+        error : record
+    };
+
+    jsRoutes.controllers.Application.getUsersByGroupId(5).ajax(getUsersByGroupIdCallBack);
+};
 
 //2. Get the data for each individual in the group
 // Add a new line to the map with no points.
