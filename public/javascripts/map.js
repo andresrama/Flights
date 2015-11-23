@@ -19,6 +19,7 @@ function record(data){
 
 //1. Get the group IDs from AJAX
 var getUsersByGroupId = function() {
+    alert("getUsersByGroupId");
     var getUsersByGroupIdCallBack = {
         success : getFlightsByUserIds,
         error : record
@@ -29,6 +30,7 @@ var getUsersByGroupId = function() {
 
 //2. Get the data for each individual in the group
 function getFlightsByUserIds(data) {
+    alert("getFlightsByUserId");
     var getFlightsByUserIds = {
         success : record,
         error : record
