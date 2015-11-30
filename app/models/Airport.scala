@@ -1,7 +1,5 @@
 package models
 
-import models.DST.DST
-import models.Formaters._ // Not superfluous; needed for conversions to and from JSON
 import org.geotools.measure._
 import play.api.libs.json._
 
@@ -17,11 +15,10 @@ case class Airport(airportId: Int,
                    country: String,
                    code: Option[String],
                    codeType: Option[String],
-                   latitude: Latitude,
-                   longitude: Longitude,
+                   latitude: Double,
+                   longitude: Double,
                    altitude: Int, //NOTE: We store this in metres like it should be
-                   timeOffsetFromUTC: Float,
-                   dst: DST
+                   timeOffsetFromUTC: Double
                     ){
 
 }

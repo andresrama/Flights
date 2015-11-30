@@ -1,6 +1,7 @@
 package models
 
 import play.api.libs.json.Json
+import sorm.Entity
 
 /**
  * Created by Andres Rama on 10/30/2015.

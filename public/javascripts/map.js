@@ -2,7 +2,7 @@
  * Created by Andres Rama on 9/7/2015.
  */
 $(function() {
-    getUsersByGroupId();
+    addUser();
 
 });
 
@@ -44,6 +44,15 @@ var polyline = L.polyline([]).addTo(map);
 
 // Keep a tally of how many points we've added to the map.
 var pointsAdded = 0;
+
+function addUser() {
+    alert("addUser");
+    var addUser = {
+        success: record,
+        error: record
+    };
+    jsRoutes.controllers.Application.addUser("Andres Rama").ajax(addUser)
+}
 
 // Start drawing the polyline.
 add();
