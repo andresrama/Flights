@@ -6,6 +6,7 @@ import com.github.nscala_time.time.Imports._
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 import play.api.libs.json._
+import play.api.mvc.BodyParsers.parse._
 import models.UserGroup.groupFormat
 import sorm.Persisted
 
@@ -27,14 +28,14 @@ class Application extends Controller {
     ).as("text/javascript")
   }
 
-  def getUsersByGroupId(groupId: Int) = Action { implicit request =>
+  def getUsersByGroupId(groupId: Long) = Action { implicit request =>
     Ok(
       //JSONArray(List(1, 2, 3, 4, groupId)).toString()
       Json.toJson(List(1,2,3,4,groupId)).toString
     )
   }
 
-  def getFlightsByUserIds(userIds: String) = Action { implicit request =>
+  def getFlightsByUserIds(id: Long) = Action { implicit request =>
     val cdgLatitude = new Latitude(49.009722)
     val cdgLongitude = new Longitude(2.547778)
     val dcaLatitude = new Latitude(38.852222)
@@ -67,10 +68,7 @@ class Application extends Controller {
     val route = Route(airline, cdg, dca, false, 0, "BOEING 777-800")
     val flight = Flight(route, DateTime.now(), DateTime.nextDay())
     val resp = Json.toJson(flight)
-    print(Json.prettyPrint(resp))
-    Ok(
-      Json.stringify(resp)
-    )
+    Ok(resp)
   }
 
   def ajaxCall(msg: String) = Action { implicit request =>
@@ -117,7 +115,7 @@ class Application extends Controller {
 
     val group = UserGroup(1, Set(1,1,2,3,5,8,13,21,34))
     //val one = Database.save(User("NAME","EMAIL","TOKEN",Seq(flight),Seq(group)))
-    val anotherOne = Database.addUser(User("NAME","EMAIL","TOKEN",Seq(flight),Seq(group)))
-    Ok(anotherOne.toString)
+    val anotherOne = Database.addUser(User(name,"EMAIL","TOKEN",Seq(flight),Seq(group)))
+    Ok(Json.toJson(anotherOne))
   }
 }

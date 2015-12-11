@@ -49,13 +49,13 @@ object Database extends Instance(
     val dbAirline = Database.addAirline(route.airline)
     val dbSourceAirport = Database.addAirport(route.sourceAirport)
     val dbDestinationAirport = Database.save(route.destinationAirport)
-    val x = Database
+    Database
       .query[Route]
       .whereEqual("airline.name", dbAirline.name)
       .whereEqual("sourceAirport.id", dbSourceAirport.id)
       .whereEqual("destinationAirport.id", dbDestinationAirport.id)
       .fetchOne()
-    x.getOrElse(
+      .getOrElse(
         Database.save[Route](Route(
           dbAirline,
           dbSourceAirport,

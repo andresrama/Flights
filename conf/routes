@@ -13,7 +13,7 @@ GET        /javascriptRoutes    controllers.Application.javascriptRoutes
 
 #Ajax! (Just don't deny him armor or hill kill himself)
 GET        /ajax-call           controllers.Application.ajaxCall(msg: String)
-GET        /group               controllers.Application.getUsersByGroupId(groupId: Int)
-GET        /flights             controllers.Application.getFlightsByUserIds(userIds: String)
+GET        /group               controllers.Application.getUsersByGroupId(groupId: Long)
+GET        /flights             controllers.Application.getFlightsByUserIds(id: Long)
 
 POST        /users              controllers.Application.addUser(name: String)
