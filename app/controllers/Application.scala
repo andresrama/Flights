@@ -66,8 +66,11 @@ class Application extends Controller {
     )
     val airline = Airline(0, "NAME", "ALIAS", Option("IATA"), Option("ICAO"), "CALLSIGN", "COUNTRY", false)
     val route = Route(airline, cdg, dca, false, 0, "BOEING 777-800")
-    val flight = Flight(route, DateTime.now(), DateTime.nextDay())
-    val resp = Json.toJson(flight)
+    val invRoute = Route(airline, dca, cdg, false, 0, "AIRBUS-380")
+    val flight = Flight(route, DateTime.yesterday(), DateTime.now())
+    val invFlight = Flight(invRoute, DateTime.yesterday(), DateTime.tomorrow())
+    val triFlight = Flight(route, DateTime.nextWeek(), DateTime.nextMonth())
+    val resp = Json.toJson(Seq(flight, invFlight, triFlight))
     Ok(resp)
   }
 

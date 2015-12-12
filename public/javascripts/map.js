@@ -1,16 +1,16 @@
 /**
  * Created by Andres Rama on 9/7/2015.
  */
+"use strict";
 $(function() {
     getUsersByGroupId("1");
 
 });
 
-verbose = true;
+var verbose = true;
 
 L.mapbox.accessToken = 'pk.eyJ1IjoiYXJhbWEiLCJhIjoiY2lmZGFsem1nNTUxOXNlbTdhM3dsdjVpaCJ9.tX_GdsKynI0ioeCkyooSWQ';
-var map = L.mapbox.map('map', 'mapbox.streets')
-    .setView([0, 0], 3);
+var map = L.mapbox.map('map', 'mapbox.streets');
 
 
 function record(data){
@@ -37,40 +37,33 @@ function getFlightsByUserIds(data) {
     };
 
     jsRoutes.controllers.Application.getFlightsByUserIds(data).ajax(getFlightsByUserIds);
-};
-
-var marker = L.marker([0, 0], {
-    icon: L.mapbox.marker.icon({
-        'marker-color': '#f86767'
-    })
-}).addTo(map);
-
+}
 function plotRoute(data) {
-    var events  = [];
-    var flight = new Flight(data);
-    addFlightAnimation(events, flight, 100);
-    events.sort(MapEventComparator);
-    var range = events[events.length-1].time-events[0].time;
-    var runtime = 5000;
-    var min = events[0].time;
-    for(var i = 0; i<events.length; i++){
-        events[i].time -= min;
-        events[i].time /= range;
-        events[i].time *= runtime;
+    var runtime = 10000;
+    var precision = 5000;
+    var flights = [];
+    var events = [];
+    var totalTime = 0;
+    var durations = [];
+    for(var i = 0; i < data.length; i++){
+        var flight = new Flight(data[i]);
+        flights.push(flight);
+        var duration = flight.arrivalTime-flight.departureTime;
+        durations.push(duration);
+        totalTime += duration;
     }
-    console.log(events);
+    for(var i = 0; i < flights.length; i++){
+        AddFlightsToEvents(events, flights[i], (durations[i]/totalTime)*precision);
+    }
+    PrepareEvents(events, runtime);
     PlayMapEvents(events, 0);
 }
 
 function moveMarker(params){
-    console.log("Move bitch get outta the way");
-    console.log(params);
     params.marker.setLatLng(L.latLng(params.y,params.x));
-    console.log(params.marker)
 }
 
-function addFlightAnimation(events, flight2, precision){
-    var flight = new Flight(flight2);
+function AddFlightsToEvents(events, flight, precision){
     var greatCircle = routeToArc(flight.route);
     var line = greatCircle.Arc(precision, { offset: 10 });
     var start = flight.departureTime/1;
@@ -84,7 +77,7 @@ function addFlightAnimation(events, flight2, precision){
     }).addTo(map);
     L.geoJson(line.json()).addTo(map);                    //TODO: Dynamic lines
     for(var i = 0; i < line.geometries[0].coords.length; ++i){
-        var params = new Object();
+        var params = {};
         params.marker = marker;
         params.x = line.geometries[0].coords[i][0];
         params.y = line.geometries[0].coords[i][1];

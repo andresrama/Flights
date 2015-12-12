@@ -1,7 +1,7 @@
 /**
  * Created by Andres Rama on 12/5/2015.
  */
-
+"use strict";
 
 function Airline(airline) {
     console.log("airline constructor");
@@ -70,11 +70,33 @@ function MapEventComparator(a,b){
     return 0;
 }
 
+/**
+ * Sorts and normalizes events based on time
+ * @param events {[Event]}
+ * @param runtime {number}
+ */
+function PrepareEvents(events, runtime){
+    events.sort(MapEventComparator);
+    var range = events[events.length-1].time-events[0].time;
+    var min = events[0].time;
+    for(var i = 0; i<events.length; i++){
+        events[i].time -= min;
+        events[i].time /= range;
+        events[i].time *= runtime;
+    }
+}
+
+/**
+ * Animates an array of events on the map.
+ * @param events: {[Event]}
+ * @param i the event to animate next. set it to 0 to start at the first event
+ */
 function PlayMapEvents(events, i){
     events[i].action(events[i].params);
-    var delay = events[i+1].time - events[i].time;
-    console.log(delay);
-    if(delay > 2000)delay = 2000;
-    if(!(events[i+1] === 'undefined'))setTimeout(PlayMapEvents, delay, events, i+1)
+    if(events[i+1] !== 'undefined'){
+        var delay = events[i+1].time - events[i].time;
+        if(delay > 2000)delay = 2000;
+        setTimeout(PlayMapEvents, delay, events, i+1)
+    }
 }
 
