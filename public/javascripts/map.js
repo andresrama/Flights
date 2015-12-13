@@ -7,10 +7,12 @@ $(function() {
 
 });
 
-var verbose = true;
-
 L.mapbox.accessToken = 'pk.eyJ1IjoiYXJhbWEiLCJhIjoiY2lmZGFsem1nNTUxOXNlbTdhM3dsdjVpaCJ9.tX_GdsKynI0ioeCkyooSWQ';
-var map = L.mapbox.map('map', 'mapbox.streets');
+var mapOptions = {
+    worldCopyJump: true,
+    bounceAtZoomLimits: true
+}
+var map = L.mapbox.map('map', 'mapbox.streets', mapOptions);
 
 
 function record(data){
@@ -19,7 +21,6 @@ function record(data){
 
 //1. Get the group IDs from AJAX
 var getUsersByGroupId = function() {
-    if(verbose)console.log("getUsersByGroupId");
     var getUsersByGroupIdCallBack = {
         success : getFlightsByUserIds(3),
         error : record
@@ -30,7 +31,6 @@ var getUsersByGroupId = function() {
 
 //2. Get the data for each individual in the group
 function getFlightsByUserIds(data) {
-    if(verbose)console.log("getFlightsByUserId");
     var getFlightsByUserIds = {
         success : plotRoute,
         error : record
@@ -39,7 +39,7 @@ function getFlightsByUserIds(data) {
     jsRoutes.controllers.Application.getFlightsByUserIds(data).ajax(getFlightsByUserIds);
 }
 function plotRoute(data) {
-    var runtime = 10000;
+    var runtime = 5000;
     var precision = 5000;
     var flights = [];
     var events = [];
@@ -59,31 +59,55 @@ function plotRoute(data) {
     PlayMapEvents(events, 0);
 }
 
-function moveMarker(params){
+function MoveMarkerAndAddLine(params){
+    params.line.addLatLng(L.latLng(params.y, params.x));
+    params.line.addTo(map);
     params.marker.setLatLng(L.latLng(params.y,params.x));
+}
+
+function FadeLine(params){
+    var line = params.line;
+    var lineOptions = line.options;
+    lineOptions.opacity = params.opacity;
+    var fadedLine = L.polyline(line._latlngs, lineOptions);
+    line.spliceLatLngs(0, line._latlngs.length);
+    line.addTo(map);
+    fadedLine.addTo(map);
 }
 
 function AddFlightsToEvents(events, flight, precision){
     var greatCircle = routeToArc(flight.route);
-    var line = greatCircle.Arc(precision, { offset: 10 });
+    var arc = greatCircle.Arc(precision, { offset: 10 });
     var start = flight.departureTime/1;
-    console.log(start);
-    var interval = (flight.arrivalTime - flight.departureTime)/precision;
-    console.log(interval);
+    var flightTime = (flight.arrivalTime - flight.departureTime);
+    var interval = flightTime/precision;
     var marker =  L.marker([0, 0], {
         icon: L.mapbox.marker.icon({
             'marker-color': '#f86767'
         })
     }).addTo(map);
-    L.geoJson(line.json()).addTo(map);                    //TODO: Dynamic lines
-    for(var i = 0; i < line.geometries[0].coords.length; ++i){
-        var params = {};
-        params.marker = marker;
-        params.x = line.geometries[0].coords[i][0];
-        params.y = line.geometries[0].coords[i][1];
-        var event = new MapEvent(start + i*interval,moveMarker, params);
-        events.push(event)
+    var lineOptions = {
+        clickable: false,
+        color: '#000',
+        opacity: 0.8,
+        smoothFactor: 1.0
+    };
+    var line = L.polyline([], lineOptions).addTo(map);
+    console.log(line);
+    for(var i = 0; i < arc.geometries[0].coords.length; ++i){
+        var addParams = {};
+        addParams.marker = marker;
+        addParams.line = line;
+        addParams.x = arc.geometries[0].coords[i][0];
+        addParams.y = arc.geometries[0].coords[i][1];
+        var addEvent = new MapEvent(start + i*interval,MoveMarkerAndAddLine, addParams);
+        events.push(addEvent);
     }
+    var removeParams = {};
+    removeParams.line = line;
+    removeParams.opacity = 0.15;
+    var removeEvent = new MapEvent(start+flightTime+100, FadeLine, removeParams);
+    events.push(removeEvent);
 }
 
 function routeToArc(route) {

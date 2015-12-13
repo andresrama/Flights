@@ -4,7 +4,6 @@
 "use strict";
 
 function Airline(airline) {
-    console.log("airline constructor");
     this.dbId = airline["dbId"];
     this.airlineId = airline["airlineId"];
     this.name = airline["name"];
@@ -17,7 +16,6 @@ function Airline(airline) {
 }
 
 function Airport(airport) {
-    console.log("airport constructor");
     this.name = airport["name"];
     this.city = airport["city"];
     this.country = airport["country"];
@@ -31,7 +29,6 @@ function Airport(airport) {
 
 
 function Route(route){
-    console.log("route constructor");
     this.airline = new Airline(route["airline"]);
     this.sourceAirport = new Airport(route["sourceAirport"]);
     this.destinationAirport = new Airport(route["destinationAirport"]);
@@ -41,7 +38,6 @@ function Route(route){
 }
 
 function Flight(flight) {
-    console.log("flight constructor");
     this.route = new Route(flight["route"]);
     this.departureTime = new Date(flight["departureTime"]);
     this.arrivalTime = new Date(flight["arrivalTime"]);
@@ -77,7 +73,7 @@ function MapEventComparator(a,b){
  */
 function PrepareEvents(events, runtime){
     events.sort(MapEventComparator);
-    var range = events[events.length-1].time-events[0].time;
+    var range = (events[events.length-1].time-events[0].time)/2; // /2 because the animations to make path disappear double runtime
     var min = events[0].time;
     for(var i = 0; i<events.length; i++){
         events[i].time -= min;
@@ -93,7 +89,7 @@ function PrepareEvents(events, runtime){
  */
 function PlayMapEvents(events, i){
     events[i].action(events[i].params);
-    if(events[i+1] !== 'undefined'){
+    if(typeof(events[i+1]) !== 'undefined'){
         var delay = events[i+1].time - events[i].time;
         if(delay > 2000)delay = 2000;
         setTimeout(PlayMapEvents, delay, events, i+1)
