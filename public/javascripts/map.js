@@ -11,7 +11,8 @@ L.mapbox.accessToken = 'pk.eyJ1IjoiYXJhbWEiLCJhIjoiY2lmZGFsem1nNTUxOXNlbTdhM3dsd
 var mapOptions = {
     worldCopyJump: true,
     bounceAtZoomLimits: true
-}
+};
+
 var map = L.mapbox.map('map', 'mapbox.streets', mapOptions);
 
 
@@ -38,11 +39,14 @@ function getFlightsByUserIds(data) {
 
     jsRoutes.controllers.Application.getFlightsByUserIds(data).ajax(getFlightsByUserIds);
 }
+
 function plotRoute(data) {
     var runtime = 5000;
     var precision = 5000;
     var flights = [];
-    var events = [];
+    var animationData = {};
+    animationData.events = [];
+    animationData.index = 0;
     var totalTime = 0;
     var durations = [];
     for(var i = 0; i < data.length; i++){
@@ -53,10 +57,20 @@ function plotRoute(data) {
         totalTime += duration;
     }
     for(var i = 0; i < flights.length; i++){
-        AddFlightsToEvents(events, flights[i], (durations[i]/totalTime)*precision);
+        AddFlightsToEvents(animationData.events, flights[i], Math.floor((durations[i]/totalTime)*precision));
     }
-    PrepareEvents(events, runtime);
-    PlayMapEvents(events, 0);
+    PrepareEvents(animationData.events, runtime);
+    PlayMapEvents(animationData.events, 0);
+    requestAnimationFrame(function(timestamp) {
+        AnimateEvent(timestamp, animationData);
+    });
+}
+
+function AnimateEvent(timestamp, animationData){
+    while(timestamp > animationData.events[animationData.index].time){
+        animationData.events[animationData.index].action(animationData.events[animationData.index].params);
+        animationData.index++;
+    }
 }
 
 function MoveMarkerAndAddLine(params){
