@@ -1,6 +1,7 @@
 @(tittle: String)(implicit req: RequestHeader)
 
 @main(tittle) {
-  <script src='https://api.mapbox.com/mapbox.js/plugins/arc.js/v0.1.0/arc.js'></script>
-  <script src="@routes.Assets.versioned("javascripts/classes.js")"></script>
+    <script src='https://api.mapbox.com/mapbox.js/plugins/arc.js/v0.1.0/arc.js'></script>
+    <script src='https://raw.githubusercontent.com/bbecquet/Leaflet.PolylineDecorator/master/leaflet.polylineDecorator.js'></script>
+    <script src="@routes.Assets.versioned("javascripts/classes.js")"></script>
 }

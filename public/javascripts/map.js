@@ -20,7 +20,7 @@ function record(data){
     alert(data)
 }
 
-//1. Get the group IDs from AJAX
+/*1. Get the group IDs from AJAX
 var getUsersByGroupId = function() {
     var getUsersByGroupIdCallBack = {
         success : getFlightsByUserIds(3),
@@ -28,16 +28,23 @@ var getUsersByGroupId = function() {
     };
 
     jsRoutes.controllers.Application.getUsersByGroupId(5).ajax(getUsersByGroupIdCallBack);
+};*/
+
+var getUsersByGroupId = function() {
+    jsRoutes.controllers.Application.getUsersByGroupId(5).ajax()
+        .done(function(data){
+            console.log('swag');
+            getFlightsByUserIds(3);
+        })
+        .fail(record);
 };
 
 //2. Get the data for each individual in the group
 function getFlightsByUserIds(data) {
-    var getFlightsByUserIds = {
+    jsRoutes.controllers.Application.getFlightsByUserIds(data).ajax({
         success : plotRoute,
         error : record
-    };
-
-    jsRoutes.controllers.Application.getFlightsByUserIds(data).ajax(getFlightsByUserIds);
+    });
 }
 
 function plotRoute(data) {
@@ -56,30 +63,49 @@ function plotRoute(data) {
         durations.push(duration);
         totalTime += duration;
     }
-    for(var i = 0; i < flights.length; i++){
-        AddFlightsToEvents(animationData.events, flights[i], Math.floor((durations[i]/totalTime)*precision));
+    for(var i = 0; i < flights.length; i++){ // I refuse to acknowledge that i is outside the scope of the for loop
+        addFlightsToEvents(animationData.events, flights[i], Math.floor((durations[i]/totalTime)*precision));
     }
-    PrepareEvents(animationData.events, runtime);
-    PlayMapEvents(animationData.events, 0);
-    requestAnimationFrame(function(timestamp) {
-        AnimateEvent(timestamp, animationData);
-    });
+    prepareEvents(animationData.events, runtime);
+    var oldPlay = true;  // TODO: Figure out why the animation frames thing is only rendering a single flight WTF
+    if(oldPlay){
+        playMapEvents(animationData.events, 0);
+    }else{
+        requestAnimationFrame(function(timestamp) {
+            animateEvent(timestamp, animationData);
+        });
+    }
 }
-
-function AnimateEvent(timestamp, animationData){
-    while(timestamp > animationData.events[animationData.index].time){
+var timesToLog = 10;
+function animateEvent(timestamp, animationData) {
+    while (
+        typeof(animationData.events[animationData.index]) !== 'undefined'
+        && timestamp > animationData.events[animationData.index].time
+        ) {
         animationData.events[animationData.index].action(animationData.events[animationData.index].params);
         animationData.index++;
+        if(timesToLog>0){
+            console.log(animationData.events[animationData.index]);
+            timesToLog--;
+        }
+    }
+    if (typeof(animationData.events[animationData.index]) !== 'undefined') {
+        requestAnimationFrame(function (timestamp) {
+            animateEvent(timestamp, animationData);
+        });
     }
 }
 
-function MoveMarkerAndAddLine(params){
+function moveMarkerAndAddLine(params){
+    if(typeof(params) === 'undefined')console.log("undefined params");
+    //console.log(params.marker._leaflet_id);
     params.line.addLatLng(L.latLng(params.y, params.x));
     params.line.addTo(map);
     params.marker.setLatLng(L.latLng(params.y,params.x));
+    params.marker.options.angle = params.angle
 }
 
-function FadeLine(params){
+function removeMarkerAndFadeLine(params){
     var line = params.line;
     var lineOptions = line.options;
     lineOptions.opacity = params.opacity;
@@ -87,18 +113,25 @@ function FadeLine(params){
     line.spliceLatLngs(0, line._latlngs.length);
     line.addTo(map);
     fadedLine.addTo(map);
+    map.removeLayer(params.marker);
 }
 
-function AddFlightsToEvents(events, flight, precision){
+function appearMarker(params) {
+    params.marker.setOpacity(1.0);
+}
+function addFlightsToEvents(events, flight, precision){
     var greatCircle = routeToArc(flight.route);
     var arc = greatCircle.Arc(precision, { offset: 10 });
     var start = flight.departureTime/1;
     var flightTime = (flight.arrivalTime - flight.departureTime);
     var interval = flightTime/precision;
-    var marker =  L.marker([0, 0], {
-        icon: L.mapbox.marker.icon({
-            'marker-color': '#f86767'
-        })
+    var marker =  L.rotatedMarker( [arc.geometries[0].coords[0][1], arc.geometries[0].coords[0][0]], {
+        icon: L.icon({
+            iconUrl: 'https://www.mapbox.com/maki/renders/airport-24@2x.png',
+            iconSize: [20, 20],
+
+        }),
+        opacity: 0
     }).addTo(map);
     var lineOptions = {
         clickable: false,
@@ -106,21 +139,35 @@ function AddFlightsToEvents(events, flight, precision){
         opacity: 0.8,
         smoothFactor: 1.0
     };
+
     var line = L.polyline([], lineOptions).addTo(map);
-    console.log(line);
+
+    var addParams = {};
+    addParams.marker = marker;
+    var addEvent = new MapEvent(start, appearMarker, addParams);
+    events.push(addEvent);
     for(var i = 0; i < arc.geometries[0].coords.length; ++i){
-        var addParams = {};
-        addParams.marker = marker;
-        addParams.line = line;
-        addParams.x = arc.geometries[0].coords[i][0];
-        addParams.y = arc.geometries[0].coords[i][1];
-        var addEvent = new MapEvent(start + i*interval,MoveMarkerAndAddLine, addParams);
-        events.push(addEvent);
+        var moveParams = {};
+        moveParams.marker = marker;
+        moveParams.line = line;
+        moveParams.x = arc.geometries[0].coords[i][0];
+        moveParams.y = arc.geometries[0].coords[i][1];
+        if(typeof(arc.geometries[0].coords[i-1]) !== 'undefined'){
+            moveParams.angle = Math.atan2(
+                arc.geometries[0].coords[i][0]-arc.geometries[0].coords[i-1][0],
+                arc.geometries[0].coords[i][1]-arc.geometries[0].coords[i-1][1]
+            )*(180 / Math.PI);
+        }else{
+            moveParams.angle = 0;
+        }
+        var moveEvent = new MapEvent(start + i*interval, moveMarkerAndAddLine, moveParams);
+        events.push(moveEvent);
     }
     var removeParams = {};
     removeParams.line = line;
+    removeParams.marker = marker;
     removeParams.opacity = 0.15;
-    var removeEvent = new MapEvent(start+flightTime+100, FadeLine, removeParams);
+    var removeEvent = new MapEvent(start+flightTime+100, removeMarkerAndFadeLine, removeParams);
     events.push(removeEvent);
 }
 

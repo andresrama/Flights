@@ -17,7 +17,7 @@ var ajaxCall = function() {
 };
 
 var  onSuccess = function(data) {
-    alert(data);
+
 };
 
 var onError = function(error) {

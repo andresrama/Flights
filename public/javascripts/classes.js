@@ -60,7 +60,7 @@ function MapEvent(time, action, params){
  * @param b {MapEvent}
  * @returns {number}
  */
-function MapEventComparator(a,b){
+function mapEventComparator(a,b){
     if(b.time < a.time)return 1;
     if(a.time < b.time)return -1;
     return 0;
@@ -71,8 +71,8 @@ function MapEventComparator(a,b){
  * @param events {[Event]}
  * @param runtime {number}
  */
-function PrepareEvents(events, runtime){
-    events.sort(MapEventComparator);
+function prepareEvents(events, runtime){
+    events.sort(mapEventComparator);
     var range = (events[events.length-1].time-events[0].time)/2; // /2 because the animations to make path disappear double runtime
     var min = events[0].time;
     for(var i = 0; i<events.length; i++){
@@ -87,12 +87,24 @@ function PrepareEvents(events, runtime){
  * @param events: {[Event]}
  * @param i the event to animate next. set it to 0 to start at the first event
  */
-function PlayMapEvents(events, i){
+function playMapEvents(events, i){
     events[i].action(events[i].params);
     if(typeof(events[i+1]) !== 'undefined'){
         var delay = events[i+1].time - events[i].time;
         if(delay > 2000)delay = 2000;
-        setTimeout(PlayMapEvents, delay, events, i+1)
+        setTimeout(playMapEvents, delay, events, i+1)
     }
+}
+
+/**
+ * Computes the angle relative to the x axis for a given vector
+ * @param x x component of the vector
+ * @param y y component of the vector
+ */
+function angleFromXAxis(x, y){
+    // normalize vector to legnth of 1 so the angle is correct. no idea why this isnt done in atan
+    //var legnth = Math.sqrt(x*x + y*y);
+    //y /= legnth;
+    return Math.atan2(x, y);
 }
 

@@ -23,6 +23,7 @@ libraryDependencies += "com.h2database"         %  "h2"           % "1.3.168"
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 resolvers += "gt-shapefile" at "http://download.osgeo.org/webdav/geotools/"
 resolvers += "gt-swing" at "http://download.osgeo.org/webdav/geotools/"
+resolvers += Resolver.url("Typesafe Ivy Releases", url("https://repo.typesafe.com/typesafe/ivy-releases"))(Resolver.ivyStylePatterns)
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
