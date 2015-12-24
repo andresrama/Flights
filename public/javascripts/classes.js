@@ -83,16 +83,26 @@ function prepareEvents(events, runtime){
 }
 
 /**
- * Animates an array of events on the map.
- * @param events: {[Event]}
- * @param i the event to animate next. set it to 0 to start at the first event
+ * @type {{paused: boolean, iteration: number, events: {[MapEvent]}}}
  */
-function playMapEvents(events, i){
+var globalAnimationState = {
+    paused: true,
+    iteration: 0,
+    events: []
+};
+
+/**
+ * Animates the `globalAnimationState`
+ */
+function playMapEvents(){
+    var events = globalAnimationState.events;
+    var i = globalAnimationState.iteration;
     events[i].action(events[i].params);
     if(typeof(events[i+1]) !== 'undefined'){
         var delay = events[i+1].time - events[i].time;
         if(delay > 2000)delay = 2000;
-        setTimeout(playMapEvents, delay, events, i+1)
+        globalAnimationState.iteration++;
+        if(!globalAnimationState.paused)setTimeout(playMapEvents, delay);
     }
 }
 

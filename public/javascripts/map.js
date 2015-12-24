@@ -33,7 +33,6 @@ var getUsersByGroupId = function() {
 var getUsersByGroupId = function() {
     jsRoutes.controllers.Application.getUsersByGroupId(5).ajax()
         .done(function(data){
-            console.log('swag');
             getFlightsByUserIds(3);
         })
         .fail(record);
@@ -69,15 +68,19 @@ function plotRoute(data) {
     prepareEvents(animationData.events, runtime);
     var oldPlay = true;  // TODO: Figure out why the animation frames thing is only rendering a single flight WTF
     if(oldPlay){
-        playMapEvents(animationData.events, 0);
+        globalAnimationState.events = animationData.events;
+        globalAnimationState.iteration = 0;
+        globalAnimationState.paused = false;
+        playMapEvents();
     }else{
         requestAnimationFrame(function(timestamp) {
             animateEvent(timestamp, animationData);
         });
     }
 }
-var timesToLog = 10;
+
 function animateEvent(timestamp, animationData) {
+    // TODO: Add ability to pause in this eventually better version
     while (
         typeof(animationData.events[animationData.index]) !== 'undefined'
         && timestamp > animationData.events[animationData.index].time
