@@ -2,9 +2,19 @@
  * Created by Andres Rama on 9/7/2015.
  */
 "use strict";
-$(function() {
+$(document).ready(function() {
     getUsersByGroupId("1");
-
+    $("#play-button").click(function(){
+        globalAnimationState.paused = !globalAnimationState.paused;
+        if(globalAnimationState.paused){
+            $("#play-pause-img").attr("src", "assets/images/play.svg");
+            $("#play-pause-img").css({"margin-left":"30%"})
+        }else{
+            $("#play-pause-img").attr("src", "assets/images/pause.svg");
+            $("#play-pause-img").css({"margin-left":"25%"})
+        }
+        playMapEvents();
+    });
 });
 
 L.mapbox.accessToken = 'pk.eyJ1IjoiYXJhbWEiLCJhIjoiY2lmZGFsem1nNTUxOXNlbTdhM3dsdjVpaCJ9.tX_GdsKynI0ioeCkyooSWQ';
@@ -19,16 +29,6 @@ var map = L.mapbox.map('map', 'mapbox.streets', mapOptions);
 function record(data){
     alert(data)
 }
-
-/*1. Get the group IDs from AJAX
-var getUsersByGroupId = function() {
-    var getUsersByGroupIdCallBack = {
-        success : getFlightsByUserIds(3),
-        error : record
-    };
-
-    jsRoutes.controllers.Application.getUsersByGroupId(5).ajax(getUsersByGroupIdCallBack);
-};*/
 
 var getUsersByGroupId = function() {
     jsRoutes.controllers.Application.getUsersByGroupId(5).ajax()
@@ -70,7 +70,7 @@ function plotRoute(data) {
     if(oldPlay){
         globalAnimationState.events = animationData.events;
         globalAnimationState.iteration = 0;
-        globalAnimationState.paused = false;
+        globalAnimationState.paused = true;
         playMapEvents();
     }else{
         requestAnimationFrame(function(timestamp) {

@@ -91,6 +91,12 @@ var globalAnimationState = {
     events: []
 };
 
+function togglePausedGlobalAnimationState(){
+    console.log(globalAnimationState.paused);
+    globalAnimationState.paused = !globalAnimationState.paused;
+    playMapEvents();
+}
+
 /**
  * Animates the `globalAnimationState`
  */
