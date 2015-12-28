@@ -4,14 +4,14 @@
 "use strict";
 $(document).ready(function() {
     getUsersByGroupId("1");
-    $("#play-button").click(function(){
+    $("#play-pause-img").click(function(){
         globalAnimationState.paused = !globalAnimationState.paused;
         if(globalAnimationState.paused){
             $("#play-pause-img").attr("src", "assets/images/play.svg");
-            $("#play-pause-img").css({"margin-left":"30%"})
+            $("#play-pause-img").css({"margin-left":"50%"})
         }else{
             $("#play-pause-img").attr("src", "assets/images/pause.svg");
-            $("#play-pause-img").css({"margin-left":"25%"})
+            $("#play-pause-img").css({"margin-left":"50%"})
         }
         playMapEvents();
     });
