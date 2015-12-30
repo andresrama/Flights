@@ -23,7 +23,9 @@ class Application extends Controller {
         routes.javascript.Application.ajaxCall,
         routes.javascript.Application.getUsersByGroupId,
         routes.javascript.Application.getFlightsByUserIds,
-        routes.javascript.Application.addUser
+        routes.javascript.Application.addUser,
+        routes.javascript.Application.searchAirlinesByTerm,
+        routes.javascript.Application.searchAirportsByTerm
       )
     ).as("text/javascript")
   }
@@ -120,5 +122,25 @@ class Application extends Controller {
     //val one = Database.save(User("NAME","EMAIL","TOKEN",Seq(flight),Seq(group)))
     val anotherOne = Database.addUser(User(name,"EMAIL","TOKEN",Seq(flight),Seq(group)))
     Ok(Json.toJson(anotherOne))
+  }
+
+  def searchAirlinesByTerm(term: String) = Action { implicit request =>
+    Ok(Json.toJson(Seq(
+      "airline1",
+      "airline2",
+      "airline3",
+      "airline5",
+      "airline8"
+    )))
+  }
+
+  def searchAirportsByTerm(term: String) = Action { implicit request =>
+    Ok(Json.toJson(Seq(
+      "airport0",
+      "airport1",
+      "airport1",
+      "airport2",
+      "airport3"
+    )))
   }
 }

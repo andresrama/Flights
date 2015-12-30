@@ -8,12 +8,27 @@ $(document).ready(function() {
         globalAnimationState.paused = !globalAnimationState.paused;
         if(globalAnimationState.paused){
             $("#play-pause-img").attr("src", "assets/images/play.svg");
-            $("#play-pause-img").css({"margin-left":"50%"})
         }else{
             $("#play-pause-img").attr("src", "assets/images/pause.svg");
-            $("#play-pause-img").css({"margin-left":"50%"})
         }
         playMapEvents();
+    });
+
+    // Jquery autocomplete
+    $(function() {
+        function log( message ) {
+            console.log(message);
+        }
+
+        $( "#birds" ).autocomplete({
+            source: "/search/airlines",
+            minLength: 2,
+            select: function( event, ui ) {
+                log( ui.item ?
+                "Selected: " + ui.item.value + " aka " + ui.item.id :
+                "Nothing selected, input was " + this.value );
+            }
+        });
     });
 });
 

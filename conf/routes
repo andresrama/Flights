@@ -15,5 +15,7 @@ GET        /javascriptRoutes    controllers.Application.javascriptRoutes
 GET        /ajax-call           controllers.Application.ajaxCall(msg: String)
 GET        /group               controllers.Application.getUsersByGroupId(groupId: Long)
 GET        /flights             controllers.Application.getFlightsByUserIds(id: Long)
+GET        /search/airlines     controllers.Application.searchAirlinesByTerm(term: String)
+GET        /search/airports     controllers.Application.searchAirportsByTerm(term: String)
 
 POST        /users              controllers.Application.addUser(name: String)
