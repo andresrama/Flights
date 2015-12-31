@@ -6,6 +6,7 @@
     <head>
         <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
         <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
@@ -18,19 +19,10 @@
         @content
     </body>
     <div id="bottom-bar" class = "bottom-bar">
-        <div class="bottom-bar-center-item">
-                <img id="play-pause-img" src="@routes.Assets.versioned("images/triangle.png")" class="bottom-bar-center-item">
-        </div>
-        <div class="bottom-bar-center-item">
-            <label for="birds">Birds: </label>
-            <input id="birds">
-        </div>
+        <img id="play-pause-img" src="@routes.Assets.versioned("images/triangle.png")" class="bottom-bar-item-center">
+        <a href="/manage">
+            <img id="settings-image" src="@routes.Assets.versioned("images/gear.svg")" >
+        </a>
+        <input id="birds" class="bottom-bar-item-right">
     </div>
-    <svg width="0" height="0">
-        <defs>
-            <clipPath id="svgPath">
-                <text x="0" y="300" textLength="800" lengthAdjust="spacing" font-family="Vollkorn" font-size="230px" font-weight="700" font-style="italic"> Blossom </text>
-            </clipPath>
-        </defs>
-    </svg>
 </html>

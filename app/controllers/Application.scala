@@ -25,7 +25,8 @@ class Application extends Controller {
         routes.javascript.Application.getFlightsByUserIds,
         routes.javascript.Application.addUser,
         routes.javascript.Application.searchAirlinesByTerm,
-        routes.javascript.Application.searchAirportsByTerm
+        routes.javascript.Application.searchAirportsByTerm,
+        routes.javascript.Application.addFlight
       )
     ).as("text/javascript")
   }
@@ -37,41 +38,42 @@ class Application extends Controller {
     )
   }
 
+  val cdgLatitude = new Latitude(49.009722)
+  val cdgLongitude = new Longitude(2.547778)
+  val dcaLatitude = new Latitude(38.852222)
+  val dcaLongitude = new Longitude(-77.037778)
+  val cdg = Airport(
+    0,
+    "DEPARTURE AIRPORT",
+    "Paris",
+    "France",
+    Option("CDG"),
+    Option("IATA"),
+    cdgLatitude.degrees,
+    cdgLongitude.degrees,
+    119,
+    1
+  )
+  val dca = Airport(
+    1,
+    "ARRIVAL AIRPORT",
+    "Washington",
+    "United States of America",
+    Option("DCA"),
+    Option("IATA"),
+    dcaLatitude.degrees,
+    dcaLongitude.degrees,
+    5,
+    -5
+  )
+  val airline = Airline(0, "NAME", "ALIAS", Option("IATA"), Option("ICAO"), "CALLSIGN", "COUNTRY", false)
+  val route = Route(airline, cdg, dca, false, 0, "BOEING 777-800")
+  val invRoute = Route(airline, dca, cdg, false, 0, "AIRBUS-380")
+  val flight = Flight(route, DateTime.yesterday(), DateTime.now())
+  val invFlight = Flight(invRoute, DateTime.yesterday(), DateTime.tomorrow())
+  val triFlight = Flight(route, DateTime.nextWeek(), DateTime.nextMonth())
+  var flights = Seq(flight, invFlight, triFlight)
   def getFlightsByUserIds(id: Long) = Action { implicit request =>
-    val cdgLatitude = new Latitude(49.009722)
-    val cdgLongitude = new Longitude(2.547778)
-    val dcaLatitude = new Latitude(38.852222)
-    val dcaLongitude = new Longitude(-77.037778)
-    val cdg = Airport(
-      0,
-      "DEPARTURE AIRPORT",
-      "Paris",
-      "France",
-      Option("CDG"),
-      Option("IATA"),
-      cdgLatitude.degrees,
-      cdgLongitude.degrees,
-      119,
-      1
-    )
-    val dca = Airport(
-      1,
-      "ARRIVAL AIRPORT",
-      "Washington",
-      "United States of America",
-      Option("DCA"),
-      Option("IATA"),
-      dcaLatitude.degrees,
-      dcaLongitude.degrees,
-      5,
-      -5
-    )
-    val airline = Airline(0, "NAME", "ALIAS", Option("IATA"), Option("ICAO"), "CALLSIGN", "COUNTRY", false)
-    val route = Route(airline, cdg, dca, false, 0, "BOEING 777-800")
-    val invRoute = Route(airline, dca, cdg, false, 0, "AIRBUS-380")
-    val flight = Flight(route, DateTime.yesterday(), DateTime.now())
-    val invFlight = Flight(invRoute, DateTime.yesterday(), DateTime.tomorrow())
-    val triFlight = Flight(route, DateTime.nextWeek(), DateTime.nextMonth())
     val resp = Json.toJson(Seq(flight, invFlight, triFlight))
     Ok(resp)
   }
@@ -86,37 +88,6 @@ class Application extends Controller {
     val newGroup = Database.save(x)
     print(newGroup.id)
     Ok(Json.toJson(newGroup.id))*/
-    val cdgLatitude = new Latitude(49.009722)
-    val cdgLongitude = new Longitude(2.547778)
-    val dcaLatitude = new Latitude(38.852222)
-    val dcaLongitude = new Longitude(-77.037778)
-    val cdg = Airport(
-      0,
-      "DEPARTURE AIRPORT",
-      "Paris",
-      "France",
-      Option("CDG"),
-      Option("IATA"),
-      cdgLatitude.degrees,
-      cdgLongitude.degrees,
-      119,
-      1
-    )
-    val dca = Airport(
-      1,
-      "ARRIVAL AIRPORT",
-      "Washington",
-      "United States of America",
-      Option("DCA"),
-      Option("IATA"),
-      dcaLatitude.degrees,
-      dcaLongitude.degrees,
-      5,
-      -5
-    )
-    val airline = Airline(0, "NAME", "ALIAS", Option("IATA"), Option("ICAO"), "CALLSIGN", "COUNTRY", false)
-    val route = Database.addRoute(Route(airline, cdg, dca, false, 0, "BOEING 777-800"))
-    val flight = Flight(route, DateTime.now(), DateTime.nextDay())
 
     val group = UserGroup(1, Set(1,1,2,3,5,8,13,21,34))
     //val one = Database.save(User("NAME","EMAIL","TOKEN",Seq(flight),Seq(group)))
@@ -142,5 +113,13 @@ class Application extends Controller {
       "airport2",
       "airport3"
     )))
+  }
+
+  def manage() = Action { implicit request =>
+    Ok(views.html.manage(Seq(flight, invFlight, triFlight)))
+  }
+
+  def addFlight = Action(parse.json[AddFlightRequest]) { implicit request =>
+    Ok("")
   }
 }

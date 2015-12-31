@@ -6,17 +6,13 @@
     height:94%;
     width: 100%;
     z-index: -1;
-    clip-path:url(#svgPath);
 }
 body { margin:0; padding:0; }
 
 
 .bottom-bar {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: stretch;
-    align-content: center;
+    font-family: Helvetica;
+    font-size: 80%;
     background-color: #FEFEFE;
     border-radius: 1%;
     border-color: #000000;
@@ -31,8 +27,26 @@ body { margin:0; padding:0; }
     /*clip-path:url(#svgPath);*/
 }
 
-.bottom-bar-center-item {
-    top: 5%;
+.bottom-bar.flexbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    align-content: center;
+}
+
+.bottom-bar-item-right {
+    position: absolute;
+    bottom: 10%;
+    right: 5%;
+    height: 70%;
+    font-size: 90%;
+}
+
+.bottom-bar-item-center {
+    position: absolute;
+    bottom: 10%;
+    right: 50%;
     max-height: 80%;
 }
 
@@ -42,13 +56,20 @@ body { margin:0; padding:0; }
     margin: auto;
 }
 
+#settings-image {
+    max-height: 100%;
+    left: 0;
+    bottom: 0;
+}
 /*.ui-autocomplete-loading {
     background: white url("images/ui-anim_basic_16x16.gif") right center no-repeat;
 }*/
 
-#play-pause-img{
-    z-index: 2;
-    max-height: 100%;
-    cursor: pointer;
+th, td {
+    padding: 15px;
+    text-align: left;
+    font-family: Helvetica;
+    border-bottom: 3px solid #BBBBBB;
 }
+
 

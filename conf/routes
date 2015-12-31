@@ -17,5 +17,7 @@ GET        /group               controllers.Application.getUsersByGroupId(groupI
 GET        /flights             controllers.Application.getFlightsByUserIds(id: Long)
 GET        /search/airlines     controllers.Application.searchAirlinesByTerm(term: String)
 GET        /search/airports     controllers.Application.searchAirportsByTerm(term: String)
+GET        /manage              controllers.Application.manage
 
 POST        /users              controllers.Application.addUser(name: String)
+POST        /flights            controllers.Application.addFlight

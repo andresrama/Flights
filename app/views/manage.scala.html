@@ -1,0 +1,49 @@
+@(flights: Seq[Flight])(implicit req: RequestHeader)
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>Manage Your Flights</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap/bootstrap.min.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap/bootstrap-datetimepicker.min.css")">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+        <script src="@routes.Assets.versioned("javascripts/bootstrap/bootstrap-datetimepicker.min.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/bootstrap/bootstrap.min.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/manager.js")"></script>
+    </head>
+    <body>
+        <table>
+            <thead>
+            <th>Airline</th>
+            <th>Codeshared?</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Departed</th>
+            <th>Arrived</th>
+                </thead>
+            <tbody>
+        @flights.map{ flight =>
+            <tr>
+                <td>@flight.route.airline.name</td>
+                <td>@flight.route.codeshare.toString</td>
+                <td>@flight.route.sourceAirport.name</td>
+                <td>@flight.route.destinationAirport.name</td>
+                <td>@flight.departureTime.toDate.toString</td>
+                <td>@flight.arrivalTime.toDate.toString</td>
+            </tr>
+        }
+            </tbody>
+        </table>
+        <form id="add-flight-bar" class = "bottom-bar flexbox">
+            <h1>Add Flight</h1>
+            <input type="text" id="from-field" placeholder="From">
+            <input type="text" id="from-time-field" placeholder="From Time">
+            <input type="text" id="to-field" placeholder="To">
+            <input type="text" id="to-time-field" placeholder="To Time">
+            <input type="text" id="airline" placeholder="Airline (Optional)">
+            <input type="submit">
+        </form>
+    </body>
+</html>
